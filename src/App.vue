@@ -1,22 +1,12 @@
-<script setup>
-import { onMounted, ref } from 'vue'
-import { apiHealth } from './api/health'
-
-const msg = ref('testing...')
-
-onMounted(async () => {
-  try {
-    const { data } = await apiHealth()
-    msg.value = JSON.stringify(data)
-  } catch (e) {
-    msg.value = e?.response?.data?.error?.message || e.message
-  }
-})
-</script>
-
 <template>
-  <div class="p-6">
-    <h1 class="text-xl font-bold">WorkoutLog frontend</h1>
-    <pre class="mt-4">{{ msg }}</pre>
+  <div class="min-h-screen">
+    <Navbar />
+    <main class="p-6">
+      <router-view />
+    </main>
   </div>
 </template>
+
+<script setup>
+import Navbar from './components/Navbar.vue'
+</script>
