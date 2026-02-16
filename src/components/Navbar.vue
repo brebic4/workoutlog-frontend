@@ -1,12 +1,10 @@
 <script setup>
-import { computed } from 'vue'
 import { useAuthStore } from '../stores/auth'
+import BaseButton from '../components/ui/BaseButton.vue'
 import { useRouter } from 'vue-router'
 
 const auth = useAuthStore()
 const router = useRouter()
-
-const isLoggedIn = computed(() => auth.isLoggedIn)
 
 const logout = () => {
   auth.logout()
@@ -20,10 +18,11 @@ const logout = () => {
       <router-link to="/workouts" class="font-bold text-lg">WorkoutLog</router-link>
 
       <nav class="flex gap-4 items-center">
-        <router-link v-if="!isLoggedIn" to="/login">Login</router-link>
-        <router-link v-if="!isLoggedIn" to="/register">Register</router-link>
+        <BaseButton v-if="!auth.isLoggedIn" as="router-link" to="/login"> Login </BaseButton>
 
-        <button v-if="isLoggedIn" class="px-3 py-1 border rounded" @click="logout">Logout</button>
+        <BaseButton v-if="!auth.isLoggedIn" as="router-link" to="/register"> Register </BaseButton>
+
+        <BaseButton v-if="auth.isLoggedIn" variant="danger" @click="logout"> Logout </BaseButton>
       </nav>
     </div>
   </header>
