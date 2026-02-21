@@ -17,7 +17,8 @@ export const useAuthStore = defineStore('auth', {
       this.loading = true
       this.error = null
       try {
-        await apiRegister(payload)
+        const res = await apiRegister(payload)
+        return res //vrati data
       } catch (e) {
         this.error = e?.response?.data?.error || e.message
         throw e

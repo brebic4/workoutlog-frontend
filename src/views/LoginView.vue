@@ -1,5 +1,5 @@
 <script setup>
-import { nextTick, ref } from 'vue'
+import { nextTick, ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 
@@ -14,6 +14,7 @@ const email = ref('')
 const password = ref('')
 const formError = ref('')
 const passwordInputRef = ref(null)
+const emailInputRef = ref(null)
 
 const clearError = () => {
   formError.value = ''
@@ -28,6 +29,11 @@ const onPasswordInput = (val) => {
   password.value = val
   if (formError.value) clearError()
 }
+
+onMounted(async () => {
+  await nextTick()
+  emailInputRef.value?.focus()
+})
 
 const extractMessage = (e) => {
   return (
@@ -68,6 +74,7 @@ const submit = async () => {
 
       <form class="space-y-4" @submit.prevent="submit">
         <BaseInput
+          ref="emailInputRef"
           label="Email"
           type="email"
           :modelValue="email"
