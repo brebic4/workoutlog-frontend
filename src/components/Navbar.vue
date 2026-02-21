@@ -28,7 +28,7 @@ const cancelLogout = () => {
 <template>
   <header class="border-b">
     <div class="p-4 flex items-center justify-between">
-      <router-link to="/workouts" class="font-bold text-lg">WorkoutLog</router-link>
+      <router-link to="/workouts" class="font-bold text-3xl">WorkoutLog</router-link>
 
       <nav class="flex gap-4 items-center">
         <BaseButton v-if="!auth.isLoggedIn" as="router-link" to="/login"> Login </BaseButton>
