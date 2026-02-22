@@ -27,7 +27,7 @@ const emit = defineEmits(['confirm', 'cancel'])
         <div class="flex justify-end gap-3 pt-2">
           <BaseButton variant="secondary" @click="emit('cancel')"> Ne </BaseButton>
 
-          <BaseButton variant="danger" @click="emit('confirm')"> Da </BaseButton>
+          <BaseButton @click="emit('confirm')"> Da </BaseButton>
         </div>
       </BaseCard>
     </div>

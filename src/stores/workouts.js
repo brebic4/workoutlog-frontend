@@ -1,11 +1,17 @@
 import { defineStore } from 'pinia'
-import { apiGetWorkouts, apiCreateWorkout, apiDeleteWorkout } from '../api/workouts'
+import {
+  apiGetWorkouts,
+  apiCreateWorkout,
+  apiDeleteWorkout,
+  apiUpdateWorkout,
+} from '../api/workouts'
 
 export const useWorkoutsStore = defineStore('workouts', {
   state: () => ({
     workouts: [],
     loading: false,
     error: null,
+    highlightId: null,
   }),
   actions: {
     async fetchWorkouts() {
@@ -62,6 +68,36 @@ export const useWorkoutsStore = defineStore('workouts', {
           e?.response?.data?.error ||
           e?.message ||
           'Greška pri brisanju workouta.'
+        throw e
+      }
+    },
+
+    async updateWorkout(id, payload) {
+      this.error = null
+      try {
+        const { data } = await apiUpdateWorkout(id, payload)
+
+        const updated = data.workout || data
+
+        // update u listi (id ili _id fallback)
+        this.workouts = this.workouts.map((w) => {
+          const wid = String(w.id)
+          if (wid !== String(id)) return w
+          return { ...w, ...updated }
+        })
+        this.highlightId = String(id)
+        setTimeout(() => {
+          if (this.highlightId === String(id)) this.highlightId = null
+        }, 1100)
+
+        return updated
+      } catch (e) {
+        this.error =
+          e?.response?.data?.message ||
+          e?.response?.data?.error?.message ||
+          e?.response?.data?.error ||
+          e?.message ||
+          'Greška pri ažuriranju workouta.'
         throw e
       }
     },

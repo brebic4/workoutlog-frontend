@@ -25,6 +25,12 @@ const onDelete = async (id) => {
     await ws.deleteWorkout(id)
   } catch {}
 }
+
+const onUpdate = async ({ id, payload }) => {
+  try {
+    await ws.updateWorkout(id, payload)
+  } catch {}
+}
 </script>
 
 <template>
@@ -38,7 +44,9 @@ const onDelete = async (id) => {
         :workouts="ws.workouts"
         :loading="ws.loading"
         :error="ws.error"
+        :highlightId="ws.highlightId"
         @delete="onDelete"
+        @update="onUpdate"
       />
     </div>
   </div>

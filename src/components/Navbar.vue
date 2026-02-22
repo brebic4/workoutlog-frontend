@@ -35,6 +35,13 @@ const cancelLogout = () => {
 
         <BaseButton v-if="!auth.isLoggedIn" as="router-link" to="/register"> Register </BaseButton>
 
+        <span
+          v-if="auth.isLoggedIn"
+          class="px-3 py-1 text-sm bg-blue-50 text-blue-700 rounded-full"
+        >
+          {{ auth.user?.email }}
+        </span>
+
         <BaseButton v-if="auth.isLoggedIn" variant="danger" @click="requestLogout">
           Logout
         </BaseButton>

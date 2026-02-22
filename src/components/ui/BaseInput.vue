@@ -12,7 +12,10 @@ defineExpose({
 })
 
 const props = defineProps({
-  modelValue: String,
+  modelValue: {
+    type: [String, Number],
+    default: '',
+  },
   label: String,
   type: {
     type: String,
