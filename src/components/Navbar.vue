@@ -42,6 +42,15 @@ const cancelLogout = () => {
           {{ auth.user?.email }}
         </span>
 
+        <BaseButton
+          v-if="auth.isLoggedIn && auth.isAdmin"
+          as="router-link"
+          to="/admin"
+          variant="secondary"
+        >
+          Admin
+        </BaseButton>
+
         <BaseButton v-if="auth.isLoggedIn" variant="danger" @click="requestLogout">
           Logout
         </BaseButton>

@@ -24,6 +24,7 @@ const onCreate = async (payload) => {
 const onDelete = async (id) => {
   try {
     await ws.deleteWorkout(id)
+    await ws.fetchWorkouts()
   } catch {}
 }
 

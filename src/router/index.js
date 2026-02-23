@@ -4,6 +4,7 @@ import { useAuthStore } from '../stores/auth'
 import LoginView from '../views/LoginView.vue'
 import RegisterView from '../views/RegisterView.vue'
 import WorkoutsView from '../views/WorkoutsView.vue'
+import AdminView from '../views/AdminView.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -12,6 +13,7 @@ const router = createRouter({
     { path: '/login', component: LoginView, meta: { guestOnly: true } },
     { path: '/register', component: RegisterView, meta: { guestOnly: true } },
     { path: '/workouts', component: WorkoutsView, meta: { requiresAuth: true } },
+    { path: '/admin', component: AdminView, meta: { requiresAuth: true, requiresAdmin: true } },
   ],
 })
 
@@ -24,6 +26,7 @@ router.beforeEach(async (to) => {
   }
 
   if (to.meta.requiresAuth && !auth.isLoggedIn) return '/login'
+  if (to.meta.requiresAdmin && !auth.isAdmin) return '/workouts'
   if (to.meta.guestOnly && auth.isLoggedIn) return '/workouts'
 })
 

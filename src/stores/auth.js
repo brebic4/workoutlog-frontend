@@ -10,7 +10,7 @@ export const useAuthStore = defineStore('auth', {
   }),
   getters: {
     isLoggedIn: (s) => !!s.token,
-    isAdmin: (s) => s.user?.role === 'admin',
+    isAdmin: (s) => s.user?.role === 'ADMIN',
   },
   actions: {
     async register(payload) {
