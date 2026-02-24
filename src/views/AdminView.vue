@@ -144,30 +144,32 @@ const reset = async () => {
 
 <template>
   <div class="space-y-6">
-    <div class="flex items-center justify-between">
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <h2 class="text-2xl font-bold">Admin</h2>
 
-      <div class="flex gap-2">
-        <BaseButton variant="secondary" @click="admin.fetchAdminWorkouts()"
-          >Refresh lista</BaseButton
-        >
+      <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
+        <div class="flex flex-wrap gap-2">
+          <BaseButton variant="secondary" size="md" @click="admin.fetchAdminWorkouts()">
+            Refresh lista
+          </BaseButton>
 
-        <div class="flex gap-2 items-center">
-          <div class="flex bg-gray-100 rounded-xl p-1">
-            <button
-              v-for="r in ranges"
-              :key="r.key"
-              class="px-3 py-1 rounded-lg text-sm"
-              :class="admin.statsRange === r.key ? 'bg-white shadow font-bold' : 'text-gray-600'"
-              @click="setRange(r.key)"
-              type="button"
-            >
-              {{ r.label }}
-            </button>
-          </div>
+          <BaseButton variant="secondary" size="md" @click="admin.fetchAdminStats()">
+            Refresh stats
+          </BaseButton>
         </div>
 
-        <BaseButton variant="secondary" @click="admin.fetchAdminStats()">Refresh stats</BaseButton>
+        <div class="flex bg-gray-100 rounded-xl p-1 w-fit">
+          <button
+            v-for="r in ranges"
+            :key="r.key"
+            class="px-2 py-1 text-xs sm:px-3 sm:py-1 rounded-lg sm:text-sm"
+            :class="admin.statsRange === r.key ? 'bg-white shadow font-bold' : 'text-gray-600'"
+            @click="setRange(r.key)"
+            type="button"
+          >
+            {{ r.label }}
+          </button>
+        </div>
       </div>
     </div>
 
@@ -177,7 +179,7 @@ const reset = async () => {
     </p>
 
     <!-- STATS -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       <BaseCard>
         <p class="text-sm text-gray-600">Ukupno workouta</p>
         <p class="text-2xl font-bold">{{ total }}</p>
@@ -232,12 +234,12 @@ const reset = async () => {
 
       <div v-if="admin.loadingStats" class="text-gray-600">Učitavanje...</div>
 
-      <div v-else class="overflow-auto border rounded-xl">
-        <table class="min-w-full text-sm">
+      <div v-else class="overflow-x-auto border rounded-xl">
+        <table class="min-w-105 w-full text-sm">
           <thead class="bg-gray-50">
             <tr>
-              <th class="text-left px-4 py-3">Trajanje</th>
-              <th class="text-right px-4 py-3">Broj workouta</th>
+              <th class="text-left px-3 py-2 sm:px-4 sm:py-3">Trajanje</th>
+              <th class="text-right px-3 py-2 sm:px-4 sm:py-3">Broj workouta</th>
             </tr>
           </thead>
           <tbody>
@@ -260,7 +262,7 @@ const reset = async () => {
         <p class="text-sm text-gray-600">Prikaz: {{ filtered.length }}</p>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
         <div>
           <label class="block text-sm font-medium text-gray-700">Filter email</label>
           <input
@@ -281,21 +283,23 @@ const reset = async () => {
           </select>
         </div>
 
-        <div class="flex items-end">
-          <BaseButton variant="secondary" class="w-full" @click="reset"> Reset filtera </BaseButton>
+        <div class="flex items-end sm:justify-end">
+          <BaseButton variant="secondary" class="w-full sm:w-auto" @click="reset">
+            Reset filtera
+          </BaseButton>
         </div>
       </div>
 
-      <div class="overflow-auto border rounded-xl">
-        <table class="min-w-full text-sm">
+      <div class="overflow-x-auto border rounded-xl">
+        <table class="min-w-225 w-full text-sm">
           <thead class="bg-gray-50">
             <tr>
-              <th class="text-left px-4 py-3">Datum</th>
-              <th class="text-left px-4 py-3">Email</th>
-              <th class="text-left px-4 py-3">Type</th>
-              <th class="text-left px-4 py-3">Trajanje</th>
-              <th class="text-left px-4 py-3">Bilješke</th>
-              <th class="text-right px-4 py-3">Akcije</th>
+              <th class="text-left px-3 py-2 sm:px-4 sm:py-3">Datum</th>
+              <th class="text-left px-3 py-2 sm:px-4 sm:py-3">Email</th>
+              <th class="text-left px-3 py-2 sm:px-4 sm:py-3">Type</th>
+              <th class="text-left px-3 py-2 sm:px-4 sm:py-3">Trajanje</th>
+              <th class="text-left px-3 py-2 sm:px-4 sm:py-3">Bilješke</th>
+              <th class="text-right px-3 py-2 sm:px-4 sm:py-3">Akcije</th>
             </tr>
           </thead>
 
@@ -315,9 +319,13 @@ const reset = async () => {
               <td class="px-4 py-3">{{ w.durationMin }} min</td>
               <td class="px-4 py-3 max-w-90 truncate">{{ w.notes }}</td>
               <td class="px-4 py-3 text-right">
-                <div class="flex justify-end gap-2">
-                  <BaseButton variant="secondary" @click="requestEdit(w)"> Update </BaseButton>
-                  <BaseButton variant="danger" @click="requestDelete(w.id)"> Delete </BaseButton>
+                <div class="flex flex-col sm:flex-row justify-end gap-2">
+                  <BaseButton variant="secondary" size="sm" @click="requestEdit(w)">
+                    Update
+                  </BaseButton>
+                  <BaseButton variant="danger" size="sm" @click="requestDelete(w.id)">
+                    Delete
+                  </BaseButton>
                 </div>
               </td>
             </tr>
