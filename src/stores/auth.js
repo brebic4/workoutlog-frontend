@@ -4,9 +4,10 @@ import { apiLogin, apiRegister, apiMe, apiChangePassword } from '../api/auth'
 export const useAuthStore = defineStore('auth', {
   state: () => ({
     token: localStorage.getItem('token') || null,
-    user: JSON.parse(localStorage.getItem('user') || 'null'),
+    user: null,
     loading: false,
     error: null,
+    sessionExpired: false,
   }),
   getters: {
     isLoggedIn: (s) => !!s.token,
@@ -63,7 +64,6 @@ export const useAuthStore = defineStore('auth', {
       this.token = null
       this.user = null
       localStorage.removeItem('token')
-      localStorage.removeItem('user')
     },
 
     async changePassword(newPassword) {
@@ -71,6 +71,10 @@ export const useAuthStore = defineStore('auth', {
       // nakon promjene lozinke -> obavezno logout
       this.logout()
       return data
+    },
+
+    setSessionExpired(value) {
+      this.sessionExpired = value
     },
   },
 })

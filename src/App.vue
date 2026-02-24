@@ -1,33 +1,18 @@
 <script setup>
 import InfoModal from './components/ui/InfoModal.vue'
 import Navbar from './components/Navbar.vue'
-import { onMounted, onBeforeUnmount, ref } from 'vue'
-import { useRouter } from 'vue-router'
 import { useAuthStore } from './stores/auth'
+import { useRouter } from 'vue-router'
 
 const router = useRouter()
-const auth = useAuthStore()
 
-const showAuthExpiredModal = ref(false)
-const authExpiredTitle = ref('Sesija istekla')
-const authExpiredMessage = ref('Sesija istekla, molimo prijavite se ponovno.')
-
-const onAuthExpired = (e) => {
-  authExpiredTitle.value = e?.detail?.title || 'Sesija istekla'
-  authExpiredMessage.value = e?.detail?.message || 'Sesija istekla, molimo prijavite se ponovno.'
-  showAuthExpiredModal.value = true
-}
-
-const handleAuthExpiredClose = async () => {
-  showAuthExpiredModal.value = false
+const handleSessionExpiredClose = () => {
+  auth.setSessionExpired(false)
   auth.logout()
-  if (router.currentRoute.value.path !== '/login') {
-    await router.push('/login')
-  }
+  router.push('/login')
 }
 
-onMounted(() => window.addEventListener('auth-expired', onAuthExpired))
-onBeforeUnmount(() => window.removeEventListener('auth-expired', onAuthExpired))
+const auth = useAuthStore()
 </script>
 
 <template>
@@ -37,10 +22,10 @@ onBeforeUnmount(() => window.removeEventListener('auth-expired', onAuthExpired))
       <router-view />
 
       <InfoModal
-        :show="showAuthExpiredModal"
+        :show="auth.sessionExpired"
         title="Sesija istekla"
-        :message="authExpiredMessage"
-        @close="handleAuthExpiredClose"
+        message="Sesija je istekla. Molimo prijavite se ponovno."
+        @close="handleSessionExpiredClose"
       />
     </main>
   </div>
