@@ -12,6 +12,10 @@ defineProps({
     type: String,
     default: 'Jeste li sigurni?',
   },
+  singleButton: {
+    type: Boolean,
+    default: false,
+  },
 })
 
 const emit = defineEmits(['confirm', 'cancel'])
@@ -25,9 +29,15 @@ const emit = defineEmits(['confirm', 'cancel'])
         <p class="text-gray-700">{{ message }}</p>
 
         <div class="flex justify-end gap-3 pt-2">
-          <BaseButton variant="secondary" @click="emit('cancel')"> Ne </BaseButton>
+          <!-- Ako je singleButton -> samo OK -->
+          <template v-if="singleButton">
+            <BaseButton type="button" @click="$emit('confirm')"> OK </BaseButton>
+          </template>
 
-          <BaseButton @click="emit('confirm')"> Da </BaseButton>
+          <template v-else>
+            <BaseButton variant="secondary" @click="emit('cancel')"> Ne </BaseButton>
+            <BaseButton @click="emit('confirm')"> Da </BaseButton>
+          </template>
         </div>
       </BaseCard>
     </div>

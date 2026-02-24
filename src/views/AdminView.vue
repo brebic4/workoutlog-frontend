@@ -5,6 +5,7 @@ import { useAdminStore } from '../stores/admin'
 import BaseCard from '../components/ui/BaseCard.vue'
 import BaseButton from '../components/ui/BaseButton.vue'
 import ConfirmModal from '../components/ui/ConfirmModal.vue'
+import EditWorkoutModal from '../components/workouts/EditWorkoutModal.vue'
 
 const admin = useAdminStore()
 
@@ -12,6 +13,44 @@ const filters = ref({
   email: '',
   type: '',
 })
+
+const showEditModal = ref(false)
+const editTarget = ref(null)
+const editLoading = ref(false)
+
+const requestEdit = (w) => {
+  editTarget.value = w
+  showEditModal.value = true
+}
+
+const closeEdit = () => {
+  showEditModal.value = false
+  editTarget.value = null
+}
+
+const saveEdit = async (payload) => {
+  if (!editTarget.value?.id) return
+  editLoading.value = true
+  try {
+    await admin.updateAdminWorkout(editTarget.value.id, payload)
+    // refresh lista + stats
+    await Promise.all([admin.fetchAdminWorkouts(), admin.fetchAdminStats()])
+    closeEdit()
+  } finally {
+    editLoading.value = false
+  }
+}
+
+const ranges = [
+  { key: '3d', label: '3D' },
+  { key: '7d', label: '7D' },
+  { key: '30d', label: '30D' },
+  { key: '3m', label: '3M' },
+]
+
+const setRange = async (r) => {
+  await admin.fetchAdminStats(r)
+}
 
 const showDeleteConfirm = ref(false)
 const deleteTargetId = ref(null)
@@ -79,16 +118,14 @@ const fmtDate = (d) => {
 
 // stats helpers
 const total = computed(() => admin.stats?.totalWorkouts ?? 0)
+const totalMinutes = computed(() => admin.stats?.totalMinutes ?? 0)
+const avgMinutes = computed(() => admin.stats?.avgMinutesPerWorkout ?? 0)
 
-const topType = computed(() => {
-  const arr = admin.stats?.byType || []
-  return arr.length ? arr[0]._id : '-'
-})
+const topType = computed(() => admin.stats?.topType ?? '-')
 
-const intensityTotal = computed(() => {
-  const arr = admin.stats?.byIntensity || []
-  return arr.reduce((acc, x) => acc + (x.count || 0), 0) || 0
-})
+const mostActive = computed(() => admin.stats?.mostActiveUser ?? null)
+
+const durationBuckets = computed(() => admin.stats?.durationBuckets ?? [])
 
 const typeBars = computed(() => {
   const arr = admin.stats?.byType || []
@@ -114,6 +151,22 @@ const reset = async () => {
         <BaseButton variant="secondary" @click="admin.fetchAdminWorkouts()"
           >Refresh lista</BaseButton
         >
+
+        <div class="flex gap-2 items-center">
+          <div class="flex bg-gray-100 rounded-xl p-1">
+            <button
+              v-for="r in ranges"
+              :key="r.key"
+              class="px-3 py-1 rounded-lg text-sm"
+              :class="admin.statsRange === r.key ? 'bg-white shadow font-bold' : 'text-gray-600'"
+              @click="setRange(r.key)"
+              type="button"
+            >
+              {{ r.label }}
+            </button>
+          </div>
+        </div>
+
         <BaseButton variant="secondary" @click="admin.fetchAdminStats()">Refresh stats</BaseButton>
       </div>
     </div>
@@ -136,14 +189,18 @@ const reset = async () => {
       </BaseCard>
 
       <BaseCard>
-        <p class="text-sm text-gray-600">Intensity zapisa</p>
-        <p class="text-2xl font-bold">{{ intensityTotal }}</p>
+        <p class="text-sm text-gray-600">Ukupno minuta</p>
+        <p class="text-2xl font-bold">{{ totalMinutes }}</p>
+        <p class="text-xs text-gray-500 mt-1">Prosjek: {{ avgMinutes }} min/workout</p>
       </BaseCard>
 
       <BaseCard>
-        <p class="text-sm text-gray-600">Status</p>
-        <p class="text-sm" v-if="admin.loadingStats || admin.loadingWorkouts">Učitavanje...</p>
-        <p class="text-sm" v-else>Ready ✅</p>
+        <p class="text-sm text-gray-600">Najaktivniji user</p>
+        <p class="text-sm font-mono" v-if="mostActive?.email">{{ mostActive.email }}</p>
+        <p class="text-sm text-gray-600" v-else>-</p>
+        <p class="text-xs text-gray-500 mt-1" v-if="mostActive">
+          {{ mostActive.minutes }} min • {{ mostActive.workouts }} workouta
+        </p>
       </BaseCard>
     </div>
 
@@ -167,6 +224,32 @@ const reset = async () => {
         </div>
 
         <p v-if="!typeBars.length" class="text-gray-600 text-sm">Nema podataka.</p>
+      </div>
+    </BaseCard>
+
+    <BaseCard class="space-y-3">
+      <h3 class="text-lg font-bold">Trajanje workouta</h3>
+
+      <div v-if="admin.loadingStats" class="text-gray-600">Učitavanje...</div>
+
+      <div v-else class="overflow-auto border rounded-xl">
+        <table class="min-w-full text-sm">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="text-left px-4 py-3">Trajanje</th>
+              <th class="text-right px-4 py-3">Broj workouta</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="b in durationBuckets" :key="b.label" class="border-t">
+              <td class="px-4 py-3 font-medium">{{ b.label }} min</td>
+              <td class="px-4 py-3 text-right">{{ b.count }}</td>
+            </tr>
+            <tr v-if="!durationBuckets.length" class="border-t">
+              <td class="px-4 py-3 text-gray-600" colspan="2">Nema podataka.</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </BaseCard>
 
@@ -232,7 +315,10 @@ const reset = async () => {
               <td class="px-4 py-3">{{ w.durationMin }} min</td>
               <td class="px-4 py-3 max-w-90 truncate">{{ w.notes }}</td>
               <td class="px-4 py-3 text-right">
-                <BaseButton variant="danger" @click="requestDelete(w.id)"> Delete </BaseButton>
+                <div class="flex justify-end gap-2">
+                  <BaseButton variant="secondary" @click="requestEdit(w)"> Update </BaseButton>
+                  <BaseButton variant="danger" @click="requestDelete(w.id)"> Delete </BaseButton>
+                </div>
               </td>
             </tr>
           </tbody>
@@ -246,6 +332,14 @@ const reset = async () => {
       message="Jeste li sigurni da želite obrisati ovaj workout?"
       @confirm="confirmDelete"
       @cancel="cancelDelete"
+    />
+
+    <EditWorkoutModal
+      :show="showEditModal"
+      :workout="editTarget"
+      :loading="editLoading"
+      @close="closeEdit"
+      @save="saveEdit"
     />
   </div>
 </template>

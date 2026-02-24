@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { apiLogin, apiRegister, apiMe } from '../api/auth'
+import { apiLogin, apiRegister, apiMe, apiChangePassword } from '../api/auth'
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
@@ -64,6 +64,13 @@ export const useAuthStore = defineStore('auth', {
       this.user = null
       localStorage.removeItem('token')
       localStorage.removeItem('user')
+    },
+
+    async changePassword(newPassword) {
+      const { data } = await apiChangePassword({ newPassword })
+      // nakon promjene lozinke -> obavezno logout
+      this.logout()
+      return data
     },
   },
 })
