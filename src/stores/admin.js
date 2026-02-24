@@ -23,6 +23,8 @@ export const useAdminStore = defineStore('admin', {
         const { data } = await apiAdminGetWorkouts()
         this.workouts = Array.isArray(data) ? data : []
       } catch (e) {
+        if (e?.__handled) return
+
         this.error =
           e?.response?.data?.message ||
           e?.response?.data?.error?.message ||
@@ -43,6 +45,14 @@ export const useAdminStore = defineStore('admin', {
         const { data } = await apiAdminGetStats(r)
         this.stats = data
       } catch (e) {
+        if (e?.__handled) return
+
+        this.error =
+          e?.response?.data?.message ||
+          e?.response?.data?.error?.message ||
+          e?.response?.data?.error ||
+          e?.message ||
+          'Greška pri dohvaćanju statistike (admin).'
       } finally {
         this.loadingStats = false
       }
@@ -54,6 +64,8 @@ export const useAdminStore = defineStore('admin', {
         await apiAdminDeleteWorkout(id)
         this.workouts = this.workouts.filter((w) => String(w.id) !== String(id))
       } catch (e) {
+        if (e?.__handled) throw e
+
         this.error =
           e?.response?.data?.message ||
           e?.response?.data?.error?.message ||
@@ -75,6 +87,8 @@ export const useAdminStore = defineStore('admin', {
 
         return data
       } catch (e) {
+        if (e?.__handled) throw e
+
         this.error =
           e?.response?.data?.message ||
           e?.response?.data?.error?.message ||

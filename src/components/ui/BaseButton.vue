@@ -26,11 +26,21 @@ const props = defineProps({
     type: [String, Object],
     default: null,
   },
+  size: {
+    type: String,
+    default: 'md', // sm | md | lg
+  },
 })
 
 const classes = computed(() => {
   const base =
-    'px-4 py-2 rounded-full font-medium transition duration-200 shadow-sm hover:shadow-md cursor-pointer'
+    'rounded-full font-medium transition duration-200 shadow-sm hover:shadow-md cursor-pointer'
+
+  const sizes = {
+    sm: 'px-2 py-1.5 text-xs',
+    md: 'px-2 py-1.5 text-xs sm:px-4 sm:py-2 sm:text-sm',
+    lg: 'px-6 py-3 text-base',
+  }
 
   const variants = {
     primary: 'bg-blue-600 text-white hover:bg-blue-700 active:bg-blue-800',
@@ -42,7 +52,7 @@ const classes = computed(() => {
     ? 'opacity-50 cursor-not-allowed'
     : 'hover:-translate-y-[1px] active:translate-y-0'
 
-  return `${base} ${variants[props.variant]} ${disabledStyle}`
+  return `${base} ${sizes[props.size]} ${variants[props.variant]} ${disabledStyle}`
 })
 </script>
 

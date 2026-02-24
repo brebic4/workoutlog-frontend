@@ -15,7 +15,7 @@ const emit = defineEmits(['delete', 'update'])
 </script>
 
 <template>
-  <div class="space-y-3">
+  <div class="flex flex-col gap-3">
     <div class="flex items-center justify-between">
       <h3 class="text-lg font-bold">Moji workouti</h3>
     </div>
@@ -31,7 +31,6 @@ const emit = defineEmits(['delete', 'update'])
         Nema workouta još. Dodaj prvi. 💪
       </div>
 
-      <!-- lista workouta -->
       <div v-else v-for="w in workouts" :key="w.id" class="list-item">
         <WorkoutCard
           :workout="w"

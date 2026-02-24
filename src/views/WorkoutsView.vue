@@ -5,8 +5,11 @@ import { useWorkoutsStore } from '../stores/workouts'
 import WorkoutForm from '../components/workouts/WorkoutForm.vue'
 import WorkoutList from '../components/workouts/WorkoutList.vue'
 import WorkoutsToolbar from '../components/workouts/WorkoutsToolbar.vue'
+import BaseButton from '@/components/ui/BaseButton.vue'
 
 const ws = useWorkoutsStore()
+
+const mobileTab = ref('list') // 'form' | 'list'
 
 onMounted(() => {
   ws.fetchWorkouts()
@@ -86,21 +89,47 @@ const filteredWorkouts = computed(() => {
 </script>
 
 <template>
+  <!-- Mobile/Tablet tabs -->
+  <div class="mb-4 flex gap-2 lg:hidden">
+    <button
+      class="flex-1 rounded-lg border px-2 py-1.5 text-xs sm:px-4 sm:py-2 sm:text-sm font-semibold cursor-pointer"
+      :class="mobileTab === 'form' ? 'bg-blue-600 text-white' : 'bg-white'"
+      @click="mobileTab = 'form'"
+    >
+      Dodaj
+    </button>
+
+    <button
+      class="flex-1 rounded-lg border px-2 py-1.5 text-xs sm:px-4 sm:py-2 sm:text-sm font-semibold cursor-pointer"
+      :class="mobileTab === 'list' ? 'bg-blue-600 text-white' : 'bg-white'"
+      @click="mobileTab = 'list'"
+    >
+      Moji workouti
+    </button>
+  </div>
+
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-    <div class="lg:col-span-1">
+    <div class="lg:col-span-1" :class="mobileTab === 'form' ? 'block' : 'hidden lg:block'">
       <WorkoutForm :onSubmit="onCreate" />
     </div>
 
-    <div class="lg:col-span-2">
+    <div
+      class="lg:col-span-2 overflow-hidden min-h-0 h-[calc(100dvh-200px)] lg:h-[calc(100vh-160px)] grid grid-rows-[auto,1fr]"
+      :class="mobileTab === 'list' ? 'grid' : 'hidden lg:grid'"
+    >
       <WorkoutsToolbar v-model="filters" :availableTypes="availableTypes" class="mb-4" />
-      <WorkoutList
-        :workouts="filteredWorkouts"
-        :loading="ws.loading"
-        :error="ws.error"
-        :highlightId="ws.highlightId"
-        @delete="onDelete"
-        @update="onUpdate"
-      />
+
+      <!-- 2. red: lista dobiva sav preostali prostor + skrol -->
+      <div class="min-h-0 overflow-y-auto pr-2">
+        <WorkoutList
+          :workouts="filteredWorkouts"
+          :loading="ws.loading"
+          :error="ws.error"
+          :highlightId="ws.highlightId"
+          @delete="onDelete"
+          @update="onUpdate"
+        />
+      </div>
     </div>
   </div>
 </template>

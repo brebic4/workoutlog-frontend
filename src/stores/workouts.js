@@ -22,6 +22,8 @@ export const useWorkoutsStore = defineStore('workouts', {
         // očekujemo data = { workouts: [...] } ili direkt array
         this.workouts = Array.isArray(data) ? data : data.workouts || []
       } catch (e) {
+        if (e?.__handled) return
+
         this.error =
           e?.response?.data?.message ||
           e?.response?.data?.error?.message ||
@@ -43,6 +45,8 @@ export const useWorkoutsStore = defineStore('workouts', {
         this.workouts = [created, ...this.workouts]
         return created
       } catch (e) {
+        if (e?.__handled) throw e
+
         this.error =
           e?.response?.data?.message ||
           e?.response?.data?.error?.message ||
@@ -62,6 +66,8 @@ export const useWorkoutsStore = defineStore('workouts', {
 
         this.workouts = this.workouts.filter((w) => String(w.id ?? w._id) !== String(id))
       } catch (e) {
+        if (e?.__handled) throw e
+
         this.error =
           e?.response?.data?.message ||
           e?.response?.data?.error?.message ||
@@ -92,6 +98,8 @@ export const useWorkoutsStore = defineStore('workouts', {
 
         return updated
       } catch (e) {
+        if (e?.__handled) throw e
+
         this.error =
           e?.response?.data?.message ||
           e?.response?.data?.error?.message ||
