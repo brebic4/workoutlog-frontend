@@ -1,40 +1,54 @@
-# .
+# 🏋️ WorkoutLog
 
-Public Link: https://workout-log-app.netlify.app/login
+## 👤 Autor
 
-This template should help get you started developing with Vue 3 in Vite.
+- Bruno Rebić
 
-## Recommended IDE Setup
+---
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+## 🎓 Fakultet
 
-## Recommended Browser Setup
+[Fakultet informatike u Puli](https://fipu.unipu.hr/)
 
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd)
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
+---
 
-## Customize configuration
+## 📚 Kolegij
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+[Web aplikacije](https://ntankovic.unipu.hr/wa)
 
-## Project Setup
+---
 
-```sh
-npm install
-```
+## 👨‍🏫 Mentor
 
-### Compile and Hot-Reload for Development
+[doc. dr. sc. Nikola Tanković](https://ntankovic.unipu.hr)
 
-```sh
-npm run dev
-```
+---
 
-### Compile and Minify for Production
+## 📌 Opis aplikacije
 
-```sh
-npm run build
-```
+WorkoutLog je web aplikacija za praćenje i upravljanje treninzima.  
+Korisnicima omogućuje jednostavan unos, pregled i analizu vlastitih treninga.
+Repozitorij za frontend dio.
+---
+
+## ⚙️ Funkcionalnosti
+
+- Registracija i prijava korisnika
+- Upravljanje korisničkim profilom
+- Dodavanje, uređivanje i brisanje treninga
+- Filtriranje i sortiranje treninga
+- Admin panel (pregled svih treninga i globalne statistike)
+
+---
+
+## 🛠️ Tehnologije
+
+- Vue 3 (Composition API)
+- Pinia (state management)
+- TailwindCSS
+
+---
+
+## 🌐 Javni link
+
+[🔗 Klikni javni link](https://workout-log-app.netlify.app/login)
